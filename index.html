@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br" class="dark">
 <head>
@@ -70,10 +69,29 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body>
     <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
+```
+
+**Mudanças feitas:**
+1. ❌ Removi: `<link rel="stylesheet" href="/index.css">`
+2. ✅ Mantive: `<script type="module" src="/index.tsx"></script>` (já que você moveu para a raiz)
+
+---
+
+Agora me confirme:
+
+**Sua estrutura atual está assim?**
+```
+seu-projeto/
+├── index.html          ← na raiz
+├── index.tsx           ← na raiz
+├── src/
+│   ├── App.tsx
+│   └── outros arquivos...
+├── package.json
+└── vite.config.ts
