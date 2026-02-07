@@ -14,10 +14,23 @@ const App: React.FC = () => {
   const [currentSteps, setCurrentSteps] = useState<TaskStep[]>([]);
   const [hasKey, setHasKey] = useState<boolean>(false);
 
-  useEffect(() => {
-    // Verifica se tem chave salva no localStorage
+  // Função para verificar a chave
+  const checkApiKey = () => {
     const savedKey = localStorage.getItem('gemini_api_key');
     setHasKey(!!savedKey);
+  };
+
+  useEffect(() => {
+    // Verifica ao carregar
+    checkApiKey();
+
+    // Adiciona listener para mudanças no localStorage
+    window.addEventListener('storage', checkApiKey);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', checkApiKey);
+    };
   }, []);
 
   return (
@@ -25,7 +38,7 @@ const App: React.FC = () => {
       <div className="max-w-md mx-auto h-[100dvh] flex flex-col relative overflow-hidden border-x border-slate-200 dark:border-slate-800 shadow-2xl bg-background-light dark:bg-background-dark">
         <Routes>
           <Route path="/" element={<Navigate to={hasKey ? "/home" : "/welcome"} replace />} />
-          <Route path="/welcome" element={<WelcomeScreen onKeySet={() => setHasKey(true)} />} />
+          <Route path="/welcome" element={<WelcomeScreen onKeySet={checkApiKey} />} />
           <Route path="/home" element={
             <HomeScreen onTaskSubmit={(task) => {
               setCurrentTask(task);
