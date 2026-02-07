@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import WelcomeScreen from './screens/WelcomeScreen';
@@ -13,32 +12,24 @@ import { TaskStep } from './types';
 const App: React.FC = () => {
   const [currentTask, setCurrentTask] = useState<string>('');
   const [currentSteps, setCurrentSteps] = useState<TaskStep[]>([]);
-  const [hasKey, setHasKey] = useState<boolean | null>(null);
+  const [hasKey, setHasKey] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkKey = async () => {
-      if (window.aistudio) {
-        const selected = await window.aistudio.hasSelectedApiKey();
-        setHasKey(selected);
-      } else {
-        setHasKey(false);
-      }
-    };
-    checkKey();
+    // Verifica se tem chave salva no localStorage
+    const savedKey = localStorage.getItem('gemini_api_key');
+    setHasKey(!!savedKey);
   }, []);
-
-  if (hasKey === null) return null; // Or a simple loader
 
   return (
     <HashRouter>
       <div className="max-w-md mx-auto h-[100dvh] flex flex-col relative overflow-hidden border-x border-slate-200 dark:border-slate-800 shadow-2xl bg-background-light dark:bg-background-dark">
         <Routes>
           <Route path="/" element={<Navigate to={hasKey ? "/home" : "/welcome"} replace />} />
-          <Route path="/welcome" element={<WelcomeScreen />} />
+          <Route path="/welcome" element={<WelcomeScreen onKeySet={() => setHasKey(true)} />} />
           <Route path="/home" element={
             <HomeScreen onTaskSubmit={(task) => {
               setCurrentTask(task);
-              setCurrentSteps([]); // Reset steps
+              setCurrentSteps([]);
             }} />
           } />
           <Route path="/steps" element={
