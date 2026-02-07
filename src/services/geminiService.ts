@@ -1,9 +1,16 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { TaskStep } from "../types";
 
-// Helper to get a fresh AI instance using the current environment key
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+// Helper to get a fresh AI instance using the key from localStorage
+const getAI = () => {
+  const apiKey = localStorage.getItem('gemini_api_key');
+  
+  if (!apiKey) {
+    throw new Error('API Key não encontrada. Por favor, configure sua chave.');
+  }
+  
+  return new GoogleGenAI({ apiKey });
+};
 
 export const getTaskBreakdown = async (task: string): Promise<TaskStep[]> => {
   try {
@@ -32,7 +39,7 @@ export const getTaskBreakdown = async (task: string): Promise<TaskStep[]> => {
         },
       },
     });
-
+    
     const stepsData = JSON.parse(response.text || "[]");
     return stepsData.map((step: any, index: number) => ({
       ...step,
@@ -41,11 +48,7 @@ export const getTaskBreakdown = async (task: string): Promise<TaskStep[]> => {
   } catch (error: any) {
     console.error("Erro ao gerar passos com Gemini:", error);
     
-    // Check for specific key error to prompt re-selection if needed externally
-    if (error?.message?.includes("Requested entity was not found")) {
-      console.warn("API Key issue detected. User may need to re-select.");
-    }
-
+    // Retorna passos padrão em caso de erro
     return [
       { id: 1, title: 'Respire e foque', desc: 'Apenas sente-se e respire fundo por 5 segundos.', icon: 'self_improvement' },
       { id: 2, title: 'Prepare a ferramenta', desc: 'Abra o app, site ou pegue o objeto necessário.', icon: 'handyman' },
@@ -67,8 +70,10 @@ export const getVictoryTitle = async (task: string): Promise<string> => {
       Ex: 'Responder emails' -> 'Mestre da Resposta'.
       Retorne APENAS o texto, sem aspas, sem pontos finais.`,
     });
+    
     return response.text?.trim().replace(/['".]/g, '') || "Inércia Vencida";
   } catch (error) {
+    console.error("Erro ao gerar título de vitória:", error);
     return "Vencedor da Inércia";
   }
 };
