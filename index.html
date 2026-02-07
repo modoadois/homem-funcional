@@ -58,40 +58,9 @@
             }
         }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
-  }
-}
-</script>
 </head>
 <body>
     <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+    <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>
-```
-
-**Mudanças feitas:**
-1. ❌ Removi: `<link rel="stylesheet" href="/index.css">`
-2. ✅ Mantive: `<script type="module" src="/index.tsx"></script>` (já que você moveu para a raiz)
-
----
-
-Agora me confirme:
-
-**Sua estrutura atual está assim?**
-```
-seu-projeto/
-├── index.html          ← na raiz
-├── index.tsx           ← na raiz
-├── src/
-│   ├── App.tsx
-│   └── outros arquivos...
-├── package.json
-└── vite.config.ts
